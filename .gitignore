@@ -1,0 +1,13 @@
+# runtime artifacts produced by install-dsh-phone-access.ps1 on the machine that runs it
+config.ps1
+*.log
+*.pid
+desktop-host.port
+lan-host.addr
+qr-*.png
+phone-entry.pin
+phone-access.txt
+
+# never commit credentials or captured secrets
+.credentials.yaml
+*.token

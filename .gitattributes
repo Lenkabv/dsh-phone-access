@@ -1,0 +1,6 @@
+# keep the repository LF-only so Windows contributors don't fight line endings
+* text=auto eol=lf
+*.ps1 text eol=lf
+*.cmd text eol=crlf
+*.vbs text eol=crlf
+*.png binary
