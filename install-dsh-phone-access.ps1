@@ -271,7 +271,7 @@ createServer((client) => {
 
     if (targetPath === GATE_PATH) {
       client.end(`HTTP/1.1 302 Found\r\nLocation: /\r\nSet-Cookie: ${GATE_COOKIE}=${GATE_VALUE}; `
-        + `Path=/; Max-Age=2592000; HttpOnly; SameSite=Lax\r\nContent-Length: 0\r\n`
+        + `Path=/; Max-Age=2592000; HttpOnly; SameSite=Strict\r\nContent-Length: 0\r\n`
         + `Connection: close\r\nCache-Control: no-store\r\n\r\n`)
       log(`gate ${requestLine} -> cookie issued`)
       return
@@ -613,6 +613,11 @@ while ($true) {
         }
     } catch {
         Log "loop error: $($_.Exception.Message)"
+    }
+    $script:tick = [int]$script:tick + 1
+    if ($script:tick % 20 -eq 0) {
+        Log ("alive addr={0} host={1} entry={2} bridge={3}" -f $addr,
+            [bool](BoundTo $HostPort $addr), [bool](BoundTo $EntryPort $addr), [bool](BoundTo $BridgePort $addr))
     }
     Start-Sleep -Seconds $IntervalSeconds
 }
