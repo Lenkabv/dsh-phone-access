@@ -117,6 +117,15 @@ separate host (own sessions):  http://<LAN_IP>:64601/e/<PIN>
    Set-NetFirewallRule -DisplayName 'DeepSeek Harness LAN 64602' -RemoteAddress <PHONE_IP>
    ```
    ⚠️ 手机换网段/IP 变了就会连不上 —— 每次换网络记得同步。
+5. **桥会重写 `Origin`，这等于替 DSH 关掉了它自带的 CSRF 栅栏**
+   （`isTrustedApiRequest` 原本要求 Origin 与 Host 同源，改写后永远同源）。
+   剩下的 CSRF 防线只有 gate cookie 的 `SameSite=Strict` —— 所以这个属性不能放松成
+   `Lax`/`None`。没有 gate cookie 的跨站请求会在 `gated()` 里直接 401。
+6. **只泄露 IP 不等于泄露访问权**：三个端口对无凭证的请求分别返回 401/404，
+   唯一无鉴权的响应是 `:64601/healthz`（`ok`，两字节）和静态资源
+   （`:64600/assets/*.js`，即前端包本体，不含数据）。PIN 空间 31⁸ ≈ 8.5×10¹¹，
+   无速率限制下按 1000 次/秒也要约 27 年 —— 真实风险是**社工**（骗你把 `/e/PIN`
+   发出去），不是爆破。
 5. **不要提交生成的运行时文件。** `config.ps1`（含 PIN 与路径）、`*.log`（含 token）、
    `desktop-host.port`、`*.pid`、`qr-*.png` 都已在 `.gitignore` 里。
    本仓库的源码文件**不含任何凭据**。
